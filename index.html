@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPASIAL GADIS PPM - Dashboard Peta Interaktif</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        #map {
+            height: 500px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .category-card {
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .map-item {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+        
+        .map-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+        
+        .badge {
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .badge-green {
+            background: #10b981;
+            color: white;
+        }
+        
+        .badge-orange {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .icon-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Header -->
+    <header class="bg-gray-800 text-white py-4 px-6 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold">SPASIAL GADIS PPM</h1>
+                <p class="text-sm text-gray-300">Sistem Informasi Geografis Kabupaten OKU Timur</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span>📅 Kabupaten OKU Timur</span>
+                <span class="bg-blue-600 px-4 py-2 rounded">Tahun 2024</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-16 px-6">
+        <div class="container mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-4">Dashboard Peta Interaktif</h2>
+            <p class="text-xl">Pilih bidang dan peta yang ingin ditampilkan</p>
+        </div>
+    </section>
+
+    <!-- Statistics Cards -->
+    <section class="container mx-auto px-6 -mt-12 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="stat-card card">
+                <div class="text-center">
+                    <div class="text-5xl mb-2">📊</div>
+                    <div class="text-4xl font-bold text-gray-800 mb-2">3</div>
+                    <div class="text-gray-600">Bidang Utama</div>
+                </div>
+            </div>
+            
+            <div class="stat-card card">
+                <div class="text-center">
+                    <div class="text-5xl mb-2">🗺️</div>
+                    <div class="text-4xl font-bold text-gray-800 mb-2">9</div>
+                    <div class="text-gray-600">Peta Tersedia</div>
+                </div>
+            </div>
+            
+            <div class="stat-card card">
+                <div class="text-center">
+                    <div class="text-5xl mb-2">📍</div>
+                    <div class="text-4xl font-bold text-gray-800 mb-2">20</div>
+                    <div class="text-gray-600">Kecamatan</div>
+                </div>
+            </div>
+            
+            <div class="stat-card card">
+                <div class="text-center">
+                    <div class="text-5xl mb-2">💾</div>
+                    <div class="text-4xl font-bold text-gray-800 mb-2">2024</div>
+                    <div class="text-gray-600">Data Terbaru</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="container mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Bidang Pemerintahan -->
+            <div>
+                <div class="category-card" style="background: linear-gradient(135deg, #0ea5e9, #06b6d4);">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="icon-circle" style="background: rgba(255,255,255,0.2);">🏛️</div>
+                        <div>
+                            <h3 class="text-xl font-bold">Bidang Pemerintahan</h3>
+                            <p class="text-sm opacity-90">Peta administrasi dan kelembagaan</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="map-item">
+                            <div class="flex items-center gap-3">
+                                <div class="icon-circle bg-blue-100">📈</div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">Peta Data Kemiskinan</div>
+                                    <div class="text-sm text-gray-500">Data kemiskinan Kab. OKUT 2024</div>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <span class="badge badge-green">Tersedia</span>
+                                <button onclick="openWebGIS('kemiskinan')" class="badge bg-blue-600 hover:bg-blue-700 cursor-pointer transition-colors">
+                                    🗺️ Peta Interaktif
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="map-item cursor-pointer" onclick="loadMap('administrasi')">
+                            <div class="flex items-center gap-3">
+                                <div class="icon-circle bg-blue-100">🏢</div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">Peta Batas Administrasi</div>
+                                    <div class="text-sm text-gray-500">Batas kecamatan dan desa</div>
+                                </div>
+                            </div>
+                            <span class="badge badge-orange">Segera</span>
+                        </div>
+                        
+                        <div class="map-item cursor-pointer" onclick="loadMap('kantor')">
+                            <div class="flex items-center gap-3">
+                                <div class="icon-circle bg-blue-100">🏛️</div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">Peta Kantor Pemerintahan</div>
+                                    <div class="text-sm text-gray-500">Lokasi kantor pemerintah</div>
+                                </div>
+                            </div>
+                            <span class="badge badge-orange">Segera</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bidang Sosial Budaya -->
+            <div>
+                <div class="category-card" style="background: linear-gradient(135deg, #a855f7, #c026d3);">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="icon-circle" style="background: rgba(255,255,255,0.2);">👥</div>
+                        <div>
+                            <h3 class="text-xl font-bold">Bidang Sosial Budaya</h3>
+                            <p class="text-sm opacity-90">Peta kependudukan dan budaya</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="map-item">
+                            <div class="flex items-center gap-3">
+                                <div class="icon-circle bg-purple-100">🏛️</div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">Peta Fasilitas Umum & Sosial</div>
+                                    <div class="text-sm text-gray-500">Fasum dan Fasos OKU Timur 2020</div>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <span class="badge badge-green">Tersedia</span>
+                                <button onclick="openWebGIS('fasilitas')" class="badge bg-blue-600 hover:bg-blue-700 cursor-pointer transition-colors">
+                                    🗺️ Peta Interaktif
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="map-item cursor-pointer" onclick="loadMap('ibadah')">
+                            <div class="flex items-center gap-3">
+                                <div class="icon-circle bg-purple-100">🕌</div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">Peta Tempat Ibadah</div>
+                                    <div class="text-sm text-gray-500">Lokasi tempat ibadah</div>
+                                </div>
+                            </div>
+                            <span class="badge badge-orange">Segera</span>
+                        </div>
+                        
+                        <div class="map-item cursor-pointer" onclick="loadMap('ginjal')">
+                            <div class="flex items-center gap-3">
+                                <div class="icon-circle bg-purple-100">🏥</div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">Peta Ginjal Bedah</div>
+                                    <div class="text-sm text-gray-500">Data kesehatan masyarakat</div>
+                                </div>
+                            </div>
+                            <span class="badge badge-orange">Segera</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bidang Pembangunan Manusia -->
+            <div>
+                <div class="category-card" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="icon-circle" style="background: rgba(255,255,255,0.2);">🎓</div>
+                        <div>
+                            <h3 class="text-xl font-bold">Bidang Pembangunan Manusia</h3>
+                            <p class="text-sm opacity-90">Peta pendidikan dan kesehatan</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="map-item cursor-pointer" onclick="loadMap('sekolah')">
+                            <div class="flex items-center gap-3">
+                                <div class="icon-circle bg-green-100">🏫</div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">Peta Sebaran Sekolah</div>
+                                    <div class="text-sm text-gray-500">Lokasi sekolah SD, SMP, SMA</div>
+                                </div>
+                            </div>
+                            <span class="badge badge-orange">Segera</span>
+                        </div>
+                        
+                        <div class="map-item cursor-pointer" onclick="loadMap('kesehatan')">
+                            <div class="flex items-center gap-3">
+                                <div class="icon-circle bg-green-100">⚕️</div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">Peta Fasilitas Kesehatan</div>
+                                    <div class="text-sm text-gray-500">Puskesmas, RS, dan klinik</div>
+                                </div>
+                            </div>
+                            <span class="badge badge-orange">Segera</span>
+                        </div>
+                        
+                        <div class="map-item cursor-pointer" onclick="loadMap('pendidikan')">
+                            <div class="flex items-center gap-3">
+                                <div class="icon-circle bg-green-100">📚</div>
+                                <div>
+                                    <div class="font-semibold text-gray-800">Peta Pendidikan</div>
+                                    <div class="text-sm text-gray-500">Data pendidikan per kecamatan</div>
+                                </div>
+                            </div>
+                            <span class="badge badge-orange">Segera</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Interactive Map Section -->
+    <section class="container mx-auto px-6 py-8">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Peta Interaktif</h3>
+                <p class="text-gray-600">Klik pada peta untuk melihat detail lokasi</p>
+            </div>
+            <div id="map"></div>
+            <div class="mt-4 flex gap-4 flex-wrap">
+                <button onclick="zoomToKabupaten()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    🏠 Zoom ke Kabupaten
+                </button>
+                <button onclick="toggleLayer('kecamatan')" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                    📍 Tampilkan Kecamatan
+                </button>
+                <button onclick="toggleLayer('puskesmas')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    ⚕️ Tampilkan Puskesmas
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 px-6 mt-12">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 SPASIAL GADIS PPM - Sistem Informasi Geografis Kabupaten OKU Timur</p>
+            <p class="text-sm text-gray-400 mt-2">Dashboard Peta Interaktif untuk Perencanaan Pembangunan Daerah</p>
+        </div>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([-4.0, 104.5], 10);
+        
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(map);
+        
+        // Sample data for OKU Timur districts
+        const kecamatanData = [
+            { name: "Belitang", lat: -4.05, lng: 104.45, population: 35000 },
+            { name: "Belitang II", lat: -4.10, lng: 104.50, population: 28000 },
+            { name: "Belitang III", lat: -4.15, lng: 104.55, population: 25000 },
+            { name: "Madang Suku I", lat: -3.95, lng: 104.40, population: 30000 },
+            { name: "Madang Suku II", lat: -3.90, lng: 104.45, population: 27000 },
+            { name: "Madang Suku III", lat: -3.85, lng: 104.50, population: 26000 },
+            { name: "Bunga Mayang", lat: -4.05, lng: 104.60, population: 22000 },
+            { name: "Buay Madang", lat: -4.00, lng: 104.55, population: 24000 },
+            { name: "Semendawai Timur", lat: -3.95, lng: 104.65, population: 29000 },
+            { name: "Semendawai Barat", lat: -4.10, lng: 104.40, population: 31000 },
+            { name: "Martapura", lat: -4.20, lng: 104.45, population: 33000 },
+            { name: "Buay Pemuka Bangsa Raja", lat: -3.90, lng: 104.60, population: 23000 },
+            { name: "Bunga Mayang Timur", lat: -4.05, lng: 104.70, population: 21000 },
+            { name: "Madang Suku IV", lat: -3.80, lng: 104.55, population: 25000 },
+            { name: "Belitang Jaya", lat: -4.15, lng: 104.45, population: 27000 },
+            { name: "Belitang Madang Raya", lat: -4.08, lng: 104.48, population: 26000 },
+            { name: "Belitang Mulya", lat: -4.12, lng: 104.52, population: 24000 },
+            { name: "Cempaka", lat: -3.88, lng: 104.42, population: 28000 },
+            { name: "Madang Suku V", lat: -3.82, lng: 104.48, population: 26000 },
+            { name: "Buay Madang Timur", lat: -3.98, lng: 104.58, population: 25000 }
+        ];
+        
+        // Sample Puskesmas data
+        const puskesmasData = [
+            { name: "Puskesmas Belitang", lat: -4.05, lng: 104.45, type: "Puskesmas Induk" },
+            { name: "Puskesmas Madang Suku I", lat: -3.95, lng: 104.40, type: "Puskesmas Pembantu" },
+            { name: "Puskesmas Bunga Mayang", lat: -4.05, lng: 104.60, type: "Puskesmas Induk" },
+            { name: "Puskesmas Semendawai", lat: -3.95, lng: 104.65, type: "Puskesmas Induk" },
+            { name: "Puskesmas Martapura", lat: -4.20, lng: 104.45, type: "Puskesmas Pembantu" }
+        ];
+        
+        // Layer groups
+        let kecamatanLayer = L.layerGroup();
+        let puskesmasLayer = L.layerGroup();
+        
+        // Add kecamatan markers
+        kecamatanData.forEach(kec => {
+            const marker = L.circleMarker([kec.lat, kec.lng], {
+                radius: 8,
+                fillColor: "#3b82f6",
+                color: "#1e40af",
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.7
+            });
+            
+            marker.bindPopup(`
+                <div style="text-align: center;">
+                    <h3 style="font-weight: bold; margin-bottom: 8px;">${kec.name}</h3>
+                    <p style="margin: 4px 0;">👥 Populasi: ${kec.population.toLocaleString()}</p>
+                    <p style="margin: 4px 0;">📍 Kecamatan</p>
+                </div>
+            `);
+            
+            marker.addTo(kecamatanLayer);
+        });
+        
+        // Add puskesmas markers
+        puskesmasData.forEach(pusk => {
+            const marker = L.marker([pusk.lat, pusk.lng], {
+                icon: L.divIcon({
+                    html: '<div style="background: #10b981; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">⚕️</div>',
+                    className: '',
+                    iconSize: [30, 30]
+                })
+            });
+            
+            marker.bindPopup(`
+                <div style="text-align: center;">
+                    <h3 style="font-weight: bold; margin-bottom: 8px;">${pusk.name}</h3>
+                    <p style="margin: 4px 0;">🏥 ${pusk.type}</p>
+                    <p style="margin: 4px 0;">⚕️ Fasilitas Kesehatan</p>
+                </div>
+            `);
+            
+            marker.addTo(puskesmasLayer);
+        });
+        
+        // Add layers to map by default
+        kecamatanLayer.addTo(map);
+        
+        // Toggle layer function
+        let layerStates = {
+            kecamatan: true,
+            puskesmas: false
+        };
+        
+        function toggleLayer(layerName) {
+            if (layerName === 'kecamatan') {
+                if (layerStates.kecamatan) {
+                    map.removeLayer(kecamatanLayer);
+                    layerStates.kecamatan = false;
+                } else {
+                    kecamatanLayer.addTo(map);
+                    layerStates.kecamatan = true;
+                }
+            } else if (layerName === 'puskesmas') {
+                if (layerStates.puskesmas) {
+                    map.removeLayer(puskesmasLayer);
+                    layerStates.puskesmas = false;
+                } else {
+                    puskesmasLayer.addTo(map);
+                    layerStates.puskesmas = true;
+                }
+            }
+        }
+        
+        function zoomToKabupaten() {
+            map.setView([-4.0, 104.5], 10);
+        }
+        
+        function loadMap(mapType) {
+            console.log('Loading map:', mapType);
+            // Here you can add logic to load different map types
+            alert('Memuat peta: ' + mapType + '\n\nFitur ini dapat dikembangkan untuk memuat data GeoJSON atau layer berbeda.');
+        }
+        
+        // Function to open WebGIS in new tab
+        function openWebGIS(mapType) {
+            // URL configuration for each map type
+            // Replace with your actual GitHub Pages URLs
+            const webgisUrls = {
+                'kemiskinan': 'https://spasialgadis.github.io/SPASIALGADISPPM/#9/-4.2191/104.4278',
+                'fasilitas': 'https://spasialgadis.github.io/SPASIALGADISPPM/#9/-4.2191/104.4278',
+                'administrasi': 'https://spasialgadis.github.io/peta-administrasi',
+                'sekolah': 'https://spasialgadis.github.io/peta-sekolah',
+                'kesehatan': 'https://spasialgadis.github.io/peta-kesehatan'
+                // Add more URLs as needed
+            };
+            
+            const url = webgisUrls[mapType];
+            
+            if (url) {
+                // Open in new tab
+                window.open(url, '_blank');
+            } else {
+                alert('WebGIS untuk peta ini sedang dalam pengembangan.');
+            }
+        }
+        
+        // Add scale control
+        L.control.scale().addTo(map);
+    </script>
+    
+</body>
+</html>
